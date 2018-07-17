@@ -180,6 +180,25 @@ private:
 			return true;
 	}
 
+	bool Initialize(){
+		if (!Check())
+			return false;
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
+				if (Grid[i][j]){
+					nCandidate[i][j] = 1;
+					for (int k = 1; k < N + 1; k++)
+						Candidate[i][j][k] = false;
+					Candidate[i][j][Grid[i][j]] = true;
+				}
+				else{
+					bool flag = Refresh(i, j);
+					if (!flag)
+						return false;
+				}
+				return true;
+	}
+
 	bool FillGrid(int *yBest, int *xBest, int *nBest){
 		bool flag;
 		do{
@@ -233,7 +252,7 @@ public:
 		//Nothing
 	}
 
-	void Input(){
+	bool Input(){
 		using namespace std;
 		ifstream fin(INPUTFILENAME);
 		for (int i = 0; i < N; i++)
@@ -243,26 +262,7 @@ public:
 					nRest--;
 			}
 		fin.close();
-		return;
-	}
-
-	bool Initialize(){
-		if (!Check())
-			return false;
-		for (int i = 0; i < N; i++)
-			for (int j = 0; j < N; j++)
-				if (Grid[i][j]){
-					nCandidate[i][j] = 1;
-					for (int k = 1; k < N + 1; k++)
-						Candidate[i][j][k] = false;
-					Candidate[i][j][Grid[i][j]] = true;
-				}
-				else{
-					bool flag = Refresh(i, j);
-					if (!flag)
-						return false;
-				}
-		return true;
+		return Initialize();
 	}
 
 	bool Dfs(int depth){
@@ -327,8 +327,7 @@ void Output(int Answer[N][N], bool flag){
 int main()
 {
 	Sudoku puzzle;
-	puzzle.Input();
-	if (!puzzle.Initialize()){
+	if (!puzzle.Input()){
 		Output(nullptr, false);
 		return -1;
 	}
