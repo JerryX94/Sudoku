@@ -267,7 +267,7 @@ public:
 
 	bool Dfs(int depth){
 		int newNRest;
-		int newNCandidate[N][N];
+		int newGrid[N][N], newNCandidate[N][N];
 		bool newCandidate[N][N][N + 1];
 		int yBest, xBest, nBest;
 		if (!FillGrid(&yBest, &xBest, &nBest))
@@ -283,21 +283,26 @@ public:
 				newNRest = nRest;
 				for (int i = 0; i < N; i++)
 					for (int j = 0; j < N; j++){
+						newGrid[i][j] = Grid[i][j];
 						newNCandidate[i][j] = nCandidate[i][j];
-						for (int kk = 0; kk < N + 1; kk++)
+						for (int kk = 1; kk < N + 1; kk++)
 							newCandidate[i][j][kk] = Candidate[i][j][kk];
 					}
 				nRest--;
 				Grid[yBest][xBest] = k;
+				nCandidate[yBest][xBest] = 1;
+				for (int kk = 1; kk < N + 1; kk++)
+					Candidate[yBest][xBest][kk] = false;
+				Candidate[yBest][xBest][k] = true;
 				ModCand(yBest, xBest);
 				if (Dfs(depth + 1))
 					return true;
-				nRest++;
-				Grid[yBest][xBest] = 0;
+				nRest = newNRest;
 				for (int i = 0; i < N; i++)
 					for (int j = 0; j < N; j++){
+						Grid[i][j] = newGrid[i][j];
 						nCandidate[i][j] = newNCandidate[i][j];
-						for (int kk = 0; kk < N + 1; kk++)
+						for (int kk = 1; kk < N + 1; kk++)
 							Candidate[i][j][kk] = newCandidate[i][j][kk];
 					}
 			}
